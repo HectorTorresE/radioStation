@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.vSlider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  background: green;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+}
