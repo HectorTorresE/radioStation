@@ -2,7 +2,7 @@ import React from 'react'
 
 function Intro() {
   return (
-    <h1 className="text-3xl font-bold underline">
+    <h1 className="text-5xl text-red-500 font-bold underline">
       Hello world!
     </h1>
   )
