@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 
 const USER_REGEXP = /^[a-zA-Z0-9]{3,23}$/;
 const PW_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const EMAIL_REGEXP = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Registration = () => {
   const userRef = useRef();
@@ -27,7 +28,7 @@ const Registration = () => {
   }, []);
 
   useEffect(() => {
-    const result = USER_REGEXP.test(username);
+    const result = EMAIL_REGEXP.test(username);
     //for tesing remove later
     console.log(result);
     console.log(username);
@@ -101,7 +102,7 @@ const Registration = () => {
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="username">
-          Username:
+          Email:
           {/* need to add icon to span for valid and invalid */}
           <span className={validName ? "text-green-400" : "hidden"}>
             <svg
