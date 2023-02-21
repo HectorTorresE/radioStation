@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const USER_REGEXP = /^[a-zA-Z0-9]{3,23}$/;
 const PW_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Registration = () => {
-  const useRef = useRef();
-  const errRef = errRef();
+  const userRef = useRef();
+  const errRef = useRef();
 
   const [username, setUsername] = useState("");
   const [validName, setValidName] = useState(false);
@@ -33,7 +33,7 @@ const Registration = () => {
     console.log(username);
     //until here
     setValidName(result);
-  }, [user]);
+  }, [username]);
 
   useEffect(() => {
     const result = PW_REGEXP.test(password);
@@ -49,7 +49,46 @@ const Registration = () => {
   useEffect(() => {
     setErrMsg("");
   }, [username, password, password2]);
-  s;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // if button enabled with JS hack
+    const v1 = USER_REGEX.test(user);
+    const v2 = PWD_REGEX.test(pwd);
+    if (!v1 || !v2) {
+      setErrMsg("Invalid Entry");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        REGISTER_URL,
+        JSON.stringify({ user, pwd }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log(response?.data);
+      console.log(response?.accessToken);
+      console.log(JSON.stringify(response));
+      setSuccess(true);
+      //clear state and controlled inputs
+      //need value attrib on inputs for this
+      setUser("");
+      setPwd("");
+      setMatchPwd("");
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg("No Server Response");
+      } else if (err.response?.status === 409) {
+        setErrMsg("Username Taken");
+      } else {
+        setErrMsg("Registration Failed");
+      }
+      errRef.current.focus();
+    }
+  };
+
   return (
     <section>
       <p
@@ -60,7 +99,7 @@ const Registration = () => {
         {errMsg}
       </p>
       <h1>Register</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="username">
           Username:
           {/* need to add icon to span for valid and invalid */}
@@ -80,7 +119,11 @@ const Registration = () => {
               />
             </svg>
           </span>
-          <span className={validName || !username ? "hidden" : "text-red-700"}>*</span>
+          <span
+            className={validName || !username ? "hidden" : "block text-red-700"}
+          >
+            *
+          </span>
         </label>
         <input
           type="text"
@@ -89,6 +132,7 @@ const Registration = () => {
           ref={userRef}
           autoComplete="off"
           onChange={(e) => setUsername(e.target.value)}
+          value={username}
           required
           aria-invalid={validName ? "false" : "true"}
           aria-describedby="uidnote"
@@ -98,7 +142,9 @@ const Registration = () => {
         <p
           id="uidnote"
           className={
-            userFocus && username && !validName ? "text-sm text-gray-500" : "hidden"
+            userFocus && username && !validName
+              ? "flex text-sm text-gray-500"
+              : "hidden"
           }
         >
           Username must be 3-23 characters. <br />
@@ -108,7 +154,7 @@ const Registration = () => {
         <label htmlFor="password">
           Password:
           {/* need to add icon to span for valid and invalid */}
-          <span className={validName ? "text-green-400" : "hidden"}>
+          <span className={validPw ? "text-green-400" : "hidden"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -124,13 +170,17 @@ const Registration = () => {
               />
             </svg>
           </span>
-          <span className={validName || password? "hidden" : "text-red-700"}>*</span>
+          <span
+            className={validPw || password ? "hidden" : "block text-red-700"}
+          >
+            *
+          </span>
         </label>
         <input
           type="password"
           id="password"
-          autoComplete="off"
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
           required
           aria-invalid={validPw ? "false" : "true"}
           aria-describedby="pwnote"
@@ -140,14 +190,69 @@ const Registration = () => {
         <p
           id="pwnote"
           className={
-            userFocus && password && !validPw ? "text-sm text-gray-500" : "hidden"
+            pwFocus && !validPw ? "flex text-sm text-gray-500" : "hidden"
           }
         >
           Password must be 8-24 characters. <br />
           Must contain at least one uppercase letter, one lowercase letter, one
           number, and one special character.
         </p>
+
+        <label htmlFor="confirm_pwd">
+          Confirm Password:
+          <span className={validPw2 ? "text-green-400" : "hidden"}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </span>
+          <span
+            className={validPw2 || password2 ? "hidden" : "block text-red-700"}
+          >
+            *
+          </span>
+        </label>
+         <input
+          type="password"
+          id="confirm_pwd"
+          onChange={(e) => setPassword2(e.target.value)}
+          value={password2}
+          required
+          aria-invalid={validPw2 ? "false" : "true"}
+          aria-describedby="confirmnote"
+          onFocus={() => setPw2Focus(true)}
+          onBlur={() => setPw2Focus(false)}
+        />
+        <p
+          id="confirmnote"
+          className={
+            pw2Focus && !validPw2 ? "flex text-sm text-gray-500" : "hidden"
+          }
+        >
+          Must match the first password input field.
+        </p>
+        <button disabled={!validName || !validPw || !validPw2 ? true : false}>
+          Sign Up
+        </button>
       </form>
+      <p>
+        Already registered?
+        <br />
+        <span className="line">
+          {/*put router link here*/}
+          <a href="#">Sign In</a>
+        </span>
+      </p>
     </section>
   );
 };
