@@ -51,7 +51,7 @@ function NavBar() {
         <>
           <div className="flex border-0 border-gray-500">
             <div className="flex flex-row w-full lg:w-1/2">
-              <div className="hidden flex-row w-1/4 bg-white text-black m-auto items-center justify-center lg:flex">
+              <div className="hidden flex-row w-1/4 h-full bg-white text-black m-auto items-center justify-center lg:flex">
                 <h5 className="uppercase font-black text-xl font-syne mr-4">
                   Now Playing
                 </h5>

@@ -97,7 +97,7 @@ const Registration = () => {
   };
 
   return (
-    <section className="flex flex-col items-center bg-gray-500">
+    <section className="flex flex-col justify-start p-4 bg-gray-500 min-h-[400px] w-80">
       <p
         ref={errRef}
         className={
@@ -107,9 +107,9 @@ const Registration = () => {
       >
         {errMsg}
       </p>
-      <h1 className="text-5xl my-5 font-bold underline">Register</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col justify-evenly grow pb-4">
-        <label htmlFor="username">
+      <h1 className="text-5xl my-5 font-bold underline text-center">Register</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col justify-evenly grow pb-4" autoComplete="off">
+        <label htmlFor="username" className="my-1 font-semibold">
           Email:
           {/* need to add icon to span for valid and invalid */}
           <FontAwesomeIcon
@@ -139,24 +139,23 @@ const Registration = () => {
           id="uidnote"
           className={
             userFocus && username && !validName
-              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              ? "text-white text-xs border-lg bg-black p-1 mt-1"
               : "absolute -left-[-9999px]"
           }
         >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          Username must be 3-23 characters. <br />
-          Only letters and numbers are allowed.
+          <FontAwesomeIcon icon={faInfoCircle} className="mx-1" />
+          Email must be valid.
         </p>
 
-        <label htmlFor="password">
+        <label htmlFor="password" className="my-1 font-semibold">
           Password:
           <FontAwesomeIcon
             icon={faCheck}
-            className={validName ? "text-green-400 ml-1" : "hidden"}
+            className={validPw ? "text-green-400 ml-1" : "hidden"}
           />
           <FontAwesomeIcon
             icon={faTimes}
-            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+            className={validPw || !password ? "hidden" : "text-red-500 mx-1"}
           />
         </label>
         <input
@@ -174,25 +173,25 @@ const Registration = () => {
           id="pwnote"
           className={
             pwFocus && !validPw
-              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              ? "text-white text-xs border-lg bg-black p-1 mt-1"
               : "absolute -left-[-9999px]"
           }
         >
-          <FontAwesomeIcon icon={faInfoCircle} />
+          <FontAwesomeIcon icon={faInfoCircle} className="mx-1" />
           Password must be 8-24 characters. <br />
           Must contain at least one uppercase letter, one lowercase letter, one
           number, and one special character.
         </p>
 
-        <label htmlFor="confirm_pwd">
+        <label htmlFor="confirm_pwd" className="my-1 font-semibold">
           Confirm Password:
           <FontAwesomeIcon
             icon={faCheck}
-            className={validName ? "text-green-400 ml-1" : "hidden"}
+            className={validPw2 &&  password2 ? "text-green-400 ml-1" : "hidden"}
           />
           <FontAwesomeIcon
             icon={faTimes}
-            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+            className={validPw2 || !password2 ? "hidden" : "text-red-500 mx-1"}
           />
         </label>
         <input
@@ -210,14 +209,14 @@ const Registration = () => {
           id="confirmnote"
           className={
             pw2Focus && !validPw2
-              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              ? "text-white text-xs border-lg bg-black p-1 mt-1"
               : "absolute -left-[-9999px]"
           }
         >
-          <FontAwesomeIcon icon={faInfoCircle} />
+          <FontAwesomeIcon icon={faInfoCircle} className="mx-1" />
           Must match the first password input field.
         </p>
-        <button disabled={!validName || !validPw || !validPw2 ? true : false}>
+        <button disabled={!validName || !validPw || !validPw2 ? true : false} className="p-2 mt-3 bg-green-200 rounded-lg font-semibold">
           Sign Up
         </button>
       </form>

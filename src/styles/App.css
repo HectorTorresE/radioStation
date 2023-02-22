@@ -7,13 +7,14 @@
 body {
   min-height: 100vh;
   background-color: dodgerblue;
+  overflow-x: hidden;
 }
 
 .App {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-min-height: 100vh; 
-padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
+  padding: 1rem 0.5rem;
 }
