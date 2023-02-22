@@ -1,4 +1,10 @@
 import { useRef, useState, useEffect } from "react";
+import {
+  faCheck,
+  faTimes,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const USER_REGEXP = /^[a-zA-Z0-9]{3,23}$/;
 const PW_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -91,40 +97,29 @@ const Registration = () => {
   };
 
   return (
-    <section>
+    <section className="flex flex-col items-center bg-gray-500">
       <p
         ref={errRef}
-        className={errMsg ? "text-red-700 flex" : "hidden"}
+        className={
+          errMsg ? "bg-pink-200 text-red-500 font-bold p-2 mb-2" : "hidden"
+        }
         aria-live="assertive"
       >
         {errMsg}
       </p>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className="text-5xl my-5 font-bold underline">Register</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col justify-evenly grow pb-4">
         <label htmlFor="username">
           Email:
           {/* need to add icon to span for valid and invalid */}
-          <span className={validName ? "text-green-400" : "hidden"}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
-          <span
-            className={validName || !username ? "hidden" : "block text-red-700"}
-          >
-            *
-          </span>
+          <FontAwesomeIcon
+            icon={faCheck}
+            className={validName ? "text-green-400 ml-1" : "hidden"}
+          />
+          <FontAwesomeIcon
+            icon={faTimes}
+            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+          />
         </label>
         <input
           type="text"
@@ -144,38 +139,25 @@ const Registration = () => {
           id="uidnote"
           className={
             userFocus && username && !validName
-              ? "flex text-sm text-gray-500"
-              : "hidden"
+              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              : "absolute -left-[-9999px]"
           }
         >
+          <FontAwesomeIcon icon={faInfoCircle} />
           Username must be 3-23 characters. <br />
           Only letters and numbers are allowed.
         </p>
 
         <label htmlFor="password">
           Password:
-          {/* need to add icon to span for valid and invalid */}
-          <span className={validPw ? "text-green-400" : "hidden"}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
-          <span
-            className={validPw || password ? "hidden" : "block text-red-700"}
-          >
-            *
-          </span>
+          <FontAwesomeIcon
+            icon={faCheck}
+            className={validName ? "text-green-400 ml-1" : "hidden"}
+          />
+          <FontAwesomeIcon
+            icon={faTimes}
+            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+          />
         </label>
         <input
           type="password"
@@ -191,9 +173,12 @@ const Registration = () => {
         <p
           id="pwnote"
           className={
-            pwFocus && !validPw ? "flex text-sm text-gray-500" : "hidden"
+            pwFocus && !validPw
+              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              : "absolute -left-[-9999px]"
           }
         >
+          <FontAwesomeIcon icon={faInfoCircle} />
           Password must be 8-24 characters. <br />
           Must contain at least one uppercase letter, one lowercase letter, one
           number, and one special character.
@@ -201,29 +186,16 @@ const Registration = () => {
 
         <label htmlFor="confirm_pwd">
           Confirm Password:
-          <span className={validPw2 ? "text-green-400" : "hidden"}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
-          <span
-            className={validPw2 || password2 ? "hidden" : "block text-red-700"}
-          >
-            *
-          </span>
+          <FontAwesomeIcon
+            icon={faCheck}
+            className={validName ? "text-green-400 ml-1" : "hidden"}
+          />
+          <FontAwesomeIcon
+            icon={faTimes}
+            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+          />
         </label>
-         <input
+        <input
           type="password"
           id="confirm_pwd"
           onChange={(e) => setPassword2(e.target.value)}
@@ -237,9 +209,12 @@ const Registration = () => {
         <p
           id="confirmnote"
           className={
-            pw2Focus && !validPw2 ? "flex text-sm text-gray-500" : "hidden"
+            pw2Focus && !validPw2
+              ? "text-xs border-lg bg-black p-1 relative bottom-[-10px]"
+              : "absolute -left-[-9999px]"
           }
         >
+          <FontAwesomeIcon icon={faInfoCircle} />
           Must match the first password input field.
         </p>
         <button disabled={!validName || !validPw || !validPw2 ? true : false}>
@@ -249,7 +224,7 @@ const Registration = () => {
       <p>
         Already registered?
         <br />
-        <span className="line">
+        <span className="inline-block">
           {/*put router link here*/}
           <a href="#">Sign In</a>
         </span>
