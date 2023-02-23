@@ -5,6 +5,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 
 const USER_REGEXP = /^[a-zA-Z0-9]{3,23}$/;
 const PW_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -14,7 +15,7 @@ const Registration = () => {
   const userRef = useRef();
   const errRef = useRef();
 
-  const [username, setUsername] = useState("");
+  const [email, setUsername] = useState("");
   const [validName, setValidName] = useState(false);
   const [userFocus, setUserFocus] = useState(false);
 
@@ -34,13 +35,13 @@ const Registration = () => {
   }, []);
 
   useEffect(() => {
-    const result = EMAIL_REGEXP.test(username);
+    const result = EMAIL_REGEXP.test(email);
     //for tesing remove later
     console.log(result);
-    console.log(username);
+    console.log(email);
     //until here
     setValidName(result);
-  }, [username]);
+  }, [email]);
 
   useEffect(() => {
     const result = PW_REGEXP.test(password);
@@ -55,28 +56,36 @@ const Registration = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [username, password, password2]);
+  }, [email, password, password2]);
+
+  const API_URL = "http://localhost:3000/users/tokens";
+  let accessToken = "";
+  let refreshToken = localStorage.getItem("refresh_token");
+  let currentUser;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if button enabled with JS hack
-    const v1 = USER_REGEX.test(user);
-    const v2 = PWD_REGEX.test(pwd);
+    const v1 = EMAIL_REGEXP.test(email);
+    const v2 = PW_REGEXP.test(password);
     if (!v1 || !v2) {
       setErrMsg("Invalid Entry");
       return;
     }
     try {
-      const response = await axios.post(
-        REGISTER_URL,
-        JSON.stringify({ user, pwd }),
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
+      const response = await fetch(`${API_URL}/sign_up`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
+      localStorage.setItem(
+        "resource_owner",
+        JSON.stringify(response?.resource_owner)
       );
-      console.log(response?.data);
-      console.log(response?.accessToken);
+      localStorage.setItem("refresh_token", response?.refresh_token);
+      accessToken = response?.token;
+      currentUser = response?.resource_owner;
+      console.log(response?.token);
+      console.log(response?.resource_owner);
       console.log(JSON.stringify(response));
       setSuccess(true);
       //clear state and controlled inputs
@@ -88,7 +97,7 @@ const Registration = () => {
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 409) {
-        setErrMsg("Username Taken");
+        setErrMsg("Email Taken");
       } else {
         setErrMsg("Registration Failed");
       }
@@ -107,8 +116,14 @@ const Registration = () => {
       >
         {errMsg}
       </p>
-      <h1 className="text-5xl my-5 font-bold underline text-center">Register</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col justify-evenly grow pb-4" autoComplete="off">
+      <h1 className="text-5xl my-5 font-bold underline text-center">
+        Register
+      </h1>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col justify-evenly grow pb-4"
+        autoComplete="off"
+      >
         <label htmlFor="username" className="my-1 font-semibold">
           Email:
           {/* need to add icon to span for valid and invalid */}
@@ -118,7 +133,7 @@ const Registration = () => {
           />
           <FontAwesomeIcon
             icon={faTimes}
-            className={validName || !username ? "hidden" : "text-red-500 mx-1"}
+            className={validName || !email ? "hidden" : "text-red-500 mx-1"}
           />
         </label>
         <input
@@ -128,7 +143,7 @@ const Registration = () => {
           ref={userRef}
           autoComplete="off"
           onChange={(e) => setUsername(e.target.value)}
-          value={username}
+          value={email}
           required
           aria-invalid={validName ? "false" : "true"}
           aria-describedby="uidnote"
@@ -138,7 +153,7 @@ const Registration = () => {
         <p
           id="uidnote"
           className={
-            userFocus && username && !validName
+            userFocus && email && !validName
               ? "text-white text-xs border-lg bg-black p-1 mt-1"
               : "absolute -left-[-9999px]"
           }
@@ -187,7 +202,7 @@ const Registration = () => {
           Confirm Password:
           <FontAwesomeIcon
             icon={faCheck}
-            className={validPw2 &&  password2 ? "text-green-400 ml-1" : "hidden"}
+            className={validPw2 && password2 ? "text-green-400 ml-1" : "hidden"}
           />
           <FontAwesomeIcon
             icon={faTimes}
@@ -216,7 +231,10 @@ const Registration = () => {
           <FontAwesomeIcon icon={faInfoCircle} className="mx-1" />
           Must match the first password input field.
         </p>
-        <button disabled={!validName || !validPw || !validPw2 ? true : false} className="p-2 mt-3 bg-green-200 rounded-lg font-semibold">
+        <button
+          disabled={!validName || !validPw || !validPw2 ? true : false}
+          className="p-2 mt-3 bg-green-200 rounded-lg font-semibold"
+        >
           Sign Up
         </button>
       </form>
@@ -227,6 +245,13 @@ const Registration = () => {
           {/*put router link here*/}
           <a href="#">Sign In</a>
         </span>
+        <button
+          id="sign_out"
+          disabled={!validName || !validPw || !validPw2 ? true : false}
+          className="p-2 mt-3 bg-green-200 rounded-lg font-semibold"
+        >
+          Sign out
+        </button>
       </p>
     </section>
   );
